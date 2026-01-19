@@ -1,12 +1,19 @@
 import './App.css'
-import SignIn from './components/sign-in'
+import { Routes, Route } from 'react-router-dom';
+import SignIn from './components/sign-in';
+import SignUp from './components/sign-up';
+import TodoList from './components/todo-list';
 
 function App() {
   
 
   return (
     <>
-    <SignIn />
+    <Routes>
+        <Route path="/" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/todos" element={<TodoList />} />
+      </Routes>
     </>
   )
 }

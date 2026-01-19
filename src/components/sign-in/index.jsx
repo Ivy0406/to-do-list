@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
 
 const SignIn = () => {
@@ -101,9 +102,9 @@ const SignIn = () => {
               >
                 登入
               </button>
-              <button className="w-full max-w-32 cursor-pointer font-bold py-3">
+              <Link to="/signup" className="w-full max-w-32 cursor-pointer font-bold py-3 px-12">
                 註冊
-              </button>
+              </Link>
             </div>
           </form>
         </div>
