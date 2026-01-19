@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@theme {
+  --font-main: "Noto Sans TC", sans-serif;
+  --font-sub: "Baloo Thambi 2", sans-serif;
+  --color-primary: #FFD370;
+  --color-accent: #D87355;
+  --color-text-main: #333333;
+  --color-text-sub: #9F9A91;
+  --color-input-default: #FFFFFF;
+
+}
+
+@layer components {
+  .material-icons {
+    font-size: inherit;
+    vertical-align: middle;
+  }
+}
+
+body {
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
