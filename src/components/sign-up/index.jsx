@@ -34,8 +34,8 @@ const SignUp = () => {
 
   return (
     <main className="bg-primary w-full h-full flex lg:items-center ">
-      <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:max-h-112 ">
-        <div className="pt-12 lg:pt-0">
+      <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:items-center ">
+        <div className="w-full max-w-96.5 mx-auto pt-12 lg:pt-0">
           <div className="flex justify-center items-center">
             <img
               className="h-10 aspect-square"
@@ -54,11 +54,11 @@ const SignUp = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-6.5 lg:gap-6 lg:pt-15.5">
-          <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl">
+        <div className="w-full max-w-76 mx-auto flex flex-col gap-6.5 lg:gap-6">
+          <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl lg:text-start">
             註冊帳號
           </h2>
-          <form className="w-full max-w-76 mx-auto flex flex-col items-center gap-4">
+          <form className="w-full  flex flex-col items-center gap-4">
             <div className="flex flex-col gap-1 w-full">
               <label
                 htmlFor="Email"
@@ -138,7 +138,7 @@ const SignUp = () => {
                 此欄位不可為空
               </p>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 lg:pt-4.5">
               <button
                 onClick={(e) => handleSignUp(e)}
                 className="w-full max-w-32 bg-text-main rounded-[10px] text-input-default text-[16px] font-bold px-12 py-3 cursor-pointer"
