@@ -5,8 +5,7 @@ import apiRequest from "../../api/apiRequest";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [uid, setUid] = useState("");
-  
+  const navigate = useNavigate();
 
   async function handleSignIn(e) {
     e.preventDefault();
@@ -16,13 +15,14 @@ const SignIn = () => {
     };
     try {
       const res = await apiRequest.post("/users/sign_in", dataForSignIn);
-      const { token, exp } = res.data;
+      const { token, exp, nickname } = res.data;
       const expDate = new Date(exp * 1000).toUTCString();
       document.cookie = `todoUserToken=${token}; expires=${expDate}; path=/`;
-      setUid(token);
+      localStorage.setItem('todoUserNickname', nickname);
       setEmail("");
       setPassword("");
       console.log("登入成功了！");
+      navigate("/todos")
     } catch (error) {
       console.log("登入失敗了ＱＱ，請檢查錯誤訊息：", error);
     }
