@@ -64,6 +64,17 @@ const TodoList = () => {
     }
   }
 
+  async function deleteTodo(id) {
+    try {
+      const res = await apiRequest.delete(`/todos/${id}`);
+      if (res.data.status) {
+        handleGetTodos();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full h-full flex lg:items-center ">
       <div className="w-full h-full flex flex-col gap-4 px-3 mx-auto lg:gap-[40.55px] lg:px-0 lg:items-center ">
@@ -110,7 +121,7 @@ const TodoList = () => {
               />
             </button>
           </form>
-          {todos === 0 ? (
+          {todos.length === 0 ? (
             <Empty />
           ) : (
             <div className="w-full bg-input-default rounded-[10px] shadow-[0_0_15px_rgba(0,0,0,0.15)] ">
@@ -144,16 +155,28 @@ const TodoList = () => {
                       <div className="w-full flex gap-4 lg:border-b lg:border-[#E5E5E5] lg:pb-3.75 lg:mr-4">
                         <button
                           className="cursor-pointer"
-                          onClick={()=>handleTodoStatus(item.id)}
+                          onClick={() => handleTodoStatus(item.id)}
                         >
                           <img
-                            src={item.status ? "/src/images/icon-check.svg" : "/src/images/icon-checkbox.svg"}
+                            src={
+                              item.status
+                                ? "/src/images/icon-check.svg"
+                                : "/src/images/icon-checkbox.svg"
+                            }
                             alt="勾選框"
                           />
                         </button>
-                        <p className={item.status ? "text-text-sub line-through" : "text-text-main" }>{item.content}</p>
+                        <p
+                          className={
+                            item.status
+                              ? "text-text-sub line-through"
+                              : "text-text-main"
+                          }
+                        >
+                          {item.content}
+                        </p>
                       </div>
-                      <button className="cursor-pointer w-4 aspect-square lg:hidden lg:group-hover:block">
+                      <button className="cursor-pointer w-4 aspect-square lg:hidden lg:group-hover:block" onClick={()=>deleteTodo(item.id)}>
                         <img
                           src="/src/images/icon-delete.svg"
                           alt="刪除按鈕"
