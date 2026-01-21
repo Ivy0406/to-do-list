@@ -51,10 +51,18 @@ const TodoList = () => {
       setNewContent("");
       handleGetTodos();
     } catch (error) {
-      console.log("新增失敗ＱＱ",error);
+      console.log("新增失敗ＱＱ", error);
     }
   }
 
+  async function handleTodoStatus(id) {
+    try {
+      await apiRequest.patch(`/todos/${id}/toggle`);
+      handleGetTodos();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full h-full flex lg:items-center ">
@@ -91,9 +99,10 @@ const TodoList = () => {
               onChange={(e) => setNewContent(e.target.value)}
               className="w-full h-full bg-input-default rounded-[10px] px-4 py-3 shadow-[0_0_15px_rgba(0,0,0,0.15)]"
             />
-            <button 
-            onClick={addTodos}
-            className="absolute right-1 top-1 bg-text-main rounded-[10px] w-10 h-9.75 flex items-center justify-center cursor-pointer">
+            <button
+              onClick={addTodos}
+              className="absolute right-1 top-1 bg-text-main rounded-[10px] w-10 h-9.75 flex items-center justify-center cursor-pointer"
+            >
               <img
                 src="/src/images/icon-plus.svg"
                 alt="新增按鈕"
@@ -126,23 +135,34 @@ const TodoList = () => {
                 </button>
               </div>
               <ul className="pt-5.75 px-4 flex flex-col gap-4 text-text-main">
-                {[...todos].reverse().map((item)=>(<li key={item.id} className="group pb-3.75 border-b border-[#E5E5E5] lg:border-0 lg:pb-0">
-                  <div className="flex justify-between">
-                    <div className="w-full flex gap-4 lg:border-b lg:border-[#E5E5E5] lg:pb-3.75 lg:mr-4">
-                      <button className="cursor-pointer">
-                        <img src="/src/images/icon-checkbox.svg" alt="勾選框" />
+                {[...todos].reverse().map((item) => (
+                  <li
+                    key={item.id}
+                    className="group pb-3.75 border-b border-[#E5E5E5] lg:border-0 lg:pb-0"
+                  >
+                    <div className="flex justify-between">
+                      <div className="w-full flex gap-4 lg:border-b lg:border-[#E5E5E5] lg:pb-3.75 lg:mr-4">
+                        <button
+                          className="cursor-pointer"
+                          onClick={()=>handleTodoStatus(item.id)}
+                        >
+                          <img
+                            src={item.status ? "/src/images/icon-check.svg" : "/src/images/icon-checkbox.svg"}
+                            alt="勾選框"
+                          />
+                        </button>
+                        <p className={item.status ? "text-text-sub line-through" : "text-text-main" }>{item.content}</p>
+                      </div>
+                      <button className="cursor-pointer w-4 aspect-square lg:hidden lg:group-hover:block">
+                        <img
+                          src="/src/images/icon-delete.svg"
+                          alt="刪除按鈕"
+                          className="w-full"
+                        />
                       </button>
-                      <p>{item.content}</p>
                     </div>
-                    <button className="cursor-pointer w-4 aspect-square lg:hidden lg:group-hover:block">
-                      <img
-                        src="/src/images/icon-delete.svg"
-                        alt="刪除按鈕"
-                        className="w-full"
-                      />
-                    </button>
-                  </div>
-                </li>))}
+                  </li>
+                ))}
               </ul>
               <div className="p-4">
                 <p className="text-text-main">5 個待完成項目</p>
