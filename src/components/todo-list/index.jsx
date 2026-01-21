@@ -9,8 +9,17 @@ const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newContent, setNewContent] = useState("");
   const [nickname, setNickname] = useState(() => {
-    return localStorage.getItem("todoUserNickname") || "";
+    return localStorage.getItem("todoUserNickname") || "親愛的用戶";
   });
+  const [editingId, setEditingId] = useState(null);
+  const [tempContent, setTempContent] = useState("");
+  const [currentTab, setCurrentTab] = useState("all");
+  const selectedTodos = todos.filter(todo=>{
+    if(currentTab === "all") return true;
+    if(currentTab === "pending") return !todo.status;
+    if(currentTab === "done") return todo.status;
+  });
+  const pendingCounts = todos.filter(todo=>!todo.status).length;
 
   async function handleSignOut() {
     try {
@@ -42,7 +51,7 @@ const TodoList = () => {
     handleGetTodos();
   }, []);
 
-  async function addTodos() {
+  async function handleAddTodos() {
     const itemToAdd = {
       content: newContent,
     };
@@ -64,7 +73,7 @@ const TodoList = () => {
     }
   }
 
-  async function deleteTodo(id) {
+  async function handleDeleteTodo(id) {
     try {
       const res = await apiRequest.delete(`/todos/${id}`);
       if (res.data.status) {
@@ -72,6 +81,35 @@ const TodoList = () => {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  function handleStartEditing(id, currentContent) {
+    setEditingId(id);
+    setTempContent(currentContent);
+  }
+
+  function handleCancelEditing() {
+    setEditingId(null);
+    setTempContent("");
+  }
+
+  async function handleSaveEditing(id) {
+    if (!tempContent.trim()) {
+      handleCancelEditing();
+      return;
+    }
+
+    try {
+      const dataForUpdate = {
+        content: tempContent,
+      };
+      const res = await apiRequest.put(`/todos/${id}`, dataForUpdate);
+      console.log(res.data.message);
+      setEditingId(null);
+      handleGetTodos();
+    } catch (error) {
+      console.log("編輯失敗ＱＱ", error);
     }
   }
 
@@ -111,7 +149,7 @@ const TodoList = () => {
               className="w-full h-full bg-input-default rounded-[10px] px-4 py-3 shadow-[0_0_15px_rgba(0,0,0,0.15)]"
             />
             <button
-              onClick={addTodos}
+              onClick={handleAddTodos}
               className="absolute right-1 top-1 bg-text-main rounded-[10px] w-10 h-9.75 flex items-center justify-center cursor-pointer"
             >
               <img
@@ -128,25 +166,28 @@ const TodoList = () => {
               <div className="flex h-12.75">
                 <button
                   value="all"
-                  className="flex-1 text-[14px] font-bold text-text-sub border-b-2 border-[#EFEFEF] active:font-bold active:text-text-main active:border-b-2 active:border-text-main cursor-pointer"
+                  onClick = {e=>setCurrentTab(e.target.value)}
+                  className={ `flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "all" ? ("text-text-main border-b-2 border-text-main") : (" font-bold text-text-sub border-b-2 border-[#EFEFEF]")}`}
                 >
                   全部
                 </button>
                 <button
                   value="pending"
-                  className="flex-1 text-[14px] font-bold text-text-sub border-b-2 border-[#EFEFEF] active:font-bold active:text-text-main active:border-text-main cursor-pointer"
+                  onClick = {e=>setCurrentTab(e.target.value)}
+                  className={ `flex-1 font-bold cursor-pointer text-[14px] ${currentTab === "pending" ? (" text-text-main border-b-2 border-text-main") : ("font-bold text-text-sub border-b-2 border-[#EFEFEF]")}`}
                 >
                   待完成
                 </button>
                 <button
                   value="done"
-                  className="flex-1 text-[14px] font-bold text-text-sub border-b-2 border-[#EFEFEF] active:font-bold active:text-text-main active:border-text-main  cursor-pointer"
+                  onClick = {e=>setCurrentTab(e.target.value)}
+                  className={ `flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "done" ? ("text-text-main border-b-2 border-text-main") : (" text-text-sub border-b-2 border-[#EFEFEF]")}`}
                 >
                   已完成
                 </button>
               </div>
               <ul className="pt-5.75 px-4 flex flex-col gap-4 text-text-main">
-                {[...todos].reverse().map((item) => (
+                {[...selectedTodos].reverse().map((item) => (
                   <li
                     key={item.id}
                     className="group pb-3.75 border-b border-[#E5E5E5] lg:border-0 lg:pb-0"
@@ -166,21 +207,43 @@ const TodoList = () => {
                             alt="勾選框"
                           />
                         </button>
-                        <p
-                          className={
-                            item.status
-                              ? "text-text-sub line-through"
-                              : "text-text-main"
-                          }
-                        >
-                          {item.content}
-                        </p>
+
+                        {editingId === item.id ? (
+                          <input
+                            type="text"
+                            value={tempContent}
+                            onChange={(e) => setTempContent(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSaveEditing(item.id);
+                              if (e.key === "Escape") handleCancelEditing();
+                            }}
+                            autoFocus
+                            onBlur = {handleCancelEditing}
+                            className="w-full bg-input-default outline-none focus:border-2 focus:border-primary focus:rounded-[5px]"
+                          ></input>
+                        ) : (
+                          <p
+                            className={
+                              item.status
+                                ? "text-text-sub line-through"
+                                : "text-text-main"
+                            }
+                            onClick={() =>
+                              handleStartEditing(item.id, item.content)
+                            }
+                          >
+                            {item.content}
+                          </p>
+                        )}
                       </div>
-                      <button className="cursor-pointer w-4 aspect-square lg:hidden lg:group-hover:block" onClick={()=>deleteTodo(item.id)}>
+                      <button
+                        className="cursor-pointer w-4 h-fit lg:hidden lg:group-hover:block "
+                        onClick={() => handleDeleteTodo(item.id)}
+                      >
                         <img
                           src="/src/images/icon-delete.svg"
                           alt="刪除按鈕"
-                          className="w-full"
+                          className="w-full h-full object-contain "
                         />
                       </button>
                     </div>
@@ -188,7 +251,7 @@ const TodoList = () => {
                 ))}
               </ul>
               <div className="p-4">
-                <p className="text-text-main">5 個待完成項目</p>
+                <p className="text-text-main">{pendingCounts} 個待完成項目</p>
               </div>
             </div>
           )}
