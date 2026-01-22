@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
+import Cookies from "js-cookie";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -9,9 +10,32 @@ const SignIn = () => {
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
+
+  useEffect(()=>{
+    const handleCheckOut = async () => {
+      const token = Cookies.get("todoUserToken");
+      if (!token) {
+        console.log("目前 cookie 沒紀錄，請重新登入");
+        return;
+      }
+      try {
+        const res = await apiRequest.get("/users/checkout");
+        if (res.data.status) {
+          console.log("驗證成功，歡迎回來！");
+          navigate("/todos");
+        } else {
+          console.log("驗證失敗Ｑ＿Ｑ");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleCheckOut();
+  }, []);
+
   async function handleSignIn(e) {
     e.preventDefault();
-    let isValid = "true";
+    let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email.trim()) {
       setEmailError("此欄位不可為空");
@@ -43,7 +67,7 @@ const SignIn = () => {
       const res = await apiRequest.post("/users/sign_in", dataForSignIn);
       const { token, exp, nickname } = res.data;
       const expDate = new Date(exp * 1000).toUTCString();
-      document.cookie = `todoUserToken=${token}; expires=${expDate}; path=/`;
+      Cookies.set(`todoUserToken=${token}; expires=${expDate}; path=/`);
       localStorage.setItem("todoUserNickname", nickname);
       setEmail("");
       setPassword("");
