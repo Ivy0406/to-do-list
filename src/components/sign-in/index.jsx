@@ -5,10 +5,36 @@ import apiRequest from "../../api/apiRequest";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   async function handleSignIn(e) {
     e.preventDefault();
+    let isValid = "true";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      setEmailError("此欄位不可為空");
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Email 格式錯誤");
+      isValid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password.trim()) {
+      setPasswordError("此欄位不可為空");
+      isValid = false;
+    } else if (!password.trim().length < 6) {
+      setPasswordError("密碼至少 6 碼");
+      isValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!isValid) return;
+
     const dataForSignIn = {
       email: email,
       password: password,
@@ -18,11 +44,11 @@ const SignIn = () => {
       const { token, exp, nickname } = res.data;
       const expDate = new Date(exp * 1000).toUTCString();
       document.cookie = `todoUserToken=${token}; expires=${expDate}; path=/`;
-      localStorage.setItem('todoUserNickname', nickname);
+      localStorage.setItem("todoUserNickname", nickname);
       setEmail("");
       setPassword("");
       console.log("登入成功了！");
-      navigate("/todos")
+      navigate("/todos");
     } catch (error) {
       console.log("登入失敗了ＱＱ，請檢查錯誤訊息：", error);
     }
@@ -52,7 +78,7 @@ const SignIn = () => {
         </div>
         <div className="flex flex-col gap-8 lg:gap-6 lg:pt-15.5">
           <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl">
-            最實用的線上代辦事項服務
+            最實用的線上待辦事項服務
           </h2>
           <form className="w-full max-w-76 mx-auto flex flex-col items-center gap-4">
             <div className="flex flex-col gap-1 w-full">
@@ -66,14 +92,19 @@ const SignIn = () => {
                 id="Email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError("");
+                }}
                 type="email"
                 placeholder="請輸入Email"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {emailError && (
+                <p className="text-accent font-bold text-[14px] pt-1.5">
+                  {emailError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1 w-full">
               <label
@@ -86,23 +117,31 @@ const SignIn = () => {
                 id="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
                 type="password"
                 placeholder="請輸入密碼"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="hidden text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {passwordError && (
+                <p className="text-accent font-bold text-[14px] pt-1.5">
+                  {passwordError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-3">
               <button
-                onClick={e=>handleSignIn(e)}
+                onClick={(e) => handleSignIn(e)}
                 className="w-full max-w-32 bg-text-main rounded-[10px] text-input-default text-[16px] font-bold px-12 py-3 cursor-pointer"
               >
                 登入
               </button>
-              <Link to="/signup" className="w-full max-w-32 cursor-pointer font-bold py-3 px-12">
+              <Link
+                to="/signup"
+                className="w-full max-w-32 cursor-pointer font-bold py-3 px-12"
+              >
                 註冊
               </Link>
             </div>
