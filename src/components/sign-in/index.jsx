@@ -1,45 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import apiRequest from "../../api/apiRequest";
-import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import AuthVisual from "../key-visual/AuthVisual";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const navigate = useNavigate();
+
+  const {signIn,checkToken} = useAuth();
+
 
   useEffect(() => {
-    const handleCheckOut = async () => {
-      const token = Cookies.get("todoUserToken");
-      if (!token) {
-        return;
-      }
-      try {
-        await apiRequest.get("/users/checkout");
-        await Swal.fire({
-          icon: "success",
-          title: "歡迎回來",
-          text: "即將前往您的待辦清單",
-          timer: 1500,
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
-        navigate("/todos");
-      } catch (error) {
-        Swal.fire({
-          icon: "warning",
-          title: "連線逾時",
-          text: "請重新登入",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        console.log(error);
-      }
-    };
-    handleCheckOut();
+   checkToken();
   }, []);
 
   async function handleSignIn(e) {
@@ -72,50 +47,15 @@ const SignIn = () => {
       email: email,
       password: password,
     };
-    try {
-      const res = await apiRequest.post("/users/sign_in", dataForSignIn);
-      const { token, exp, nickname } = res.data;
-      const expDate = new Date(exp * 1000);
-      Cookies.set("todoUserToken", token, {
-        expires: expDate,
-        path: "/",
-      });
-      localStorage.setItem("todoUserNickname", nickname);
-      setEmail("");
-      setPassword("");
-      navigate("/todos");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "登入失敗",
-        text: "帳號或密碼錯誤，請再試一次",
-      });
-      console.log("登入失敗了ＱＱ，請檢查錯誤訊息：", error);
-    }
+
+    signIn(dataForSignIn);
+  
   }
 
   return (
     <main className="bg-primary w-full h-full flex lg:items-center ">
       <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:max-h-112 ">
-        <div className="pt-12 lg:pt-0">
-          <div className="flex justify-center items-center">
-            <img
-              className="h-10 aspect-square"
-              src="/src/images/logo_lg.svg"
-              alt="logo"
-            />
-            <h1 className="font-sub font-bold text-text-main text-[32px]">
-              ONLINE TODO LIST
-            </h1>
-          </div>
-          <div className="hidden w-full max-w-96.5 aspect-square lg:block lg:pt-3.75">
-            <img
-              src="/src/images/key-visual.svg"
-              alt="主視覺"
-              className="w-full aspect-square object-contain"
-            />
-          </div>
-        </div>
+        <AuthVisual />
         <div className="flex flex-col gap-8 lg:gap-6 lg:pt-15.5">
           <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl">
             最實用的線上待辦事項服務

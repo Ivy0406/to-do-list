@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
 import Swal from "sweetalert2";
+import AuthVisual from "../key-visual/AuthVisual";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -14,10 +15,11 @@ const SignUp = () => {
   const [nicknameError, setNicknameError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+
   async function handleSignUp(e) {
     e.preventDefault();
 
-    let isValid = "true";
+    let isValid = true;
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     if (!email.trim()) {
@@ -88,25 +90,7 @@ const SignUp = () => {
   return (
     <main className="bg-primary w-full min-h-dvh flex lg:items-center ">
       <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:items-center ">
-        <div className="w-full max-w-96.5 mx-auto pt-12 lg:pt-0">
-          <div className="flex justify-center items-center">
-            <img
-              className="h-10 aspect-square"
-              src="/src/images/logo_lg.svg"
-              alt="logo"
-            />
-            <h1 className="font-sub font-bold text-text-main text-[32px]">
-              ONLINE TODO LIST
-            </h1>
-          </div>
-          <div className="hidden w-full max-w-96.5 aspect-square lg:block lg:pt-3.75">
-            <img
-              src="/src/images/key-visual.svg"
-              alt="主視覺"
-              className="w-full aspect-square object-contain"
-            />
-          </div>
-        </div>
+        <AuthVisual />
         <div className="w-full max-w-76 mx-auto flex flex-col gap-6.5 lg:gap-6">
           <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl lg:text-start">
             註冊帳號
