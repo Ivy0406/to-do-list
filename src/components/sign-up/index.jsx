@@ -8,14 +8,55 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [nicknameError, setNicknameError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   async function handleSignUp(e) {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert("兩次密碼輸入不一致");
-      return;
+    let isValid = "true";
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    if (!email.trim()) {
+      setEmailError("此欄位不可為空");
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Email 格式錯誤");
+      isValid = false;
+    } else {
+      setEmailError("");
     }
+
+    if (!nickname.trim()) {
+      setNicknameError("此欄位不可為空");
+      isValid = false;
+    } else {
+      setNicknameError("");
+    }
+
+    if (!password.trim()) {
+      setPasswordError("此欄位不可為空");
+      isValid = false;
+    } else if (password.trim().length < 6) {
+      setPasswordError("密碼至少 6 碼");
+      isValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!confirmPassword.trim()) {
+      setConfirmPasswordError("此欄位不可為空");
+      isValid = false;
+    } else if (confirmPassword !== password) {
+      setConfirmPasswordError("兩次密碼輸入不一致");
+      isValid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    if (!isValid) return;
 
     const dataForSignUp = {
       email: email,
@@ -25,7 +66,7 @@ const SignUp = () => {
 
     try {
       const res = await apiRequest.post("/users/sign_up", dataForSignUp);
-      console.log("註冊成功！請重新登入",res.data);
+      console.log("註冊成功！請重新登入", res.data);
       navigate("/");
     } catch (error) {
       console.log("註冊失敗ＱＱ，錯誤訊息：", error);
@@ -70,14 +111,19 @@ const SignUp = () => {
                 id="Email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError("");
+                }}
                 type="email"
                 placeholder="請輸入Email"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="hidden text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {emailError && (
+                <p className="text-accent font-bold text-[14px] pt-1.5">
+                  {emailError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1 w-full">
               <label
@@ -90,14 +136,19 @@ const SignUp = () => {
                 id="nickname"
                 autoComplete="username"
                 value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                  if (nicknameError) setNicknameError("");
+                }}
                 type="text"
                 placeholder="請輸入暱稱"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="hidden text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {nicknameError && (
+                <p className="text-accent font-bold text-[14px] pt-1.5">
+                  {nicknameError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1 w-full">
               <label
@@ -108,16 +159,20 @@ const SignUp = () => {
               </label>
               <input
                 id="password"
-                autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
                 type="password"
                 placeholder="請輸入密碼"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="hidden text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {passwordError && (
+                <p className=" text-accent font-bold text-[14px] pt-1.5">
+                  {passwordError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1 w-full">
               <label
@@ -129,14 +184,19 @@ const SignUp = () => {
               <input
                 id="confirmPassword"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (confirmPasswordError) setConfirmPasswordError("");
+                }}
                 type="password"
                 placeholder="請再次輸入密碼"
                 className="bg-input-default rounded-[10px] px-4 py-3"
               ></input>
-              <p className="hidden text-accent font-bold text-[14px] pt-1.5">
-                此欄位不可為空
-              </p>
+              {confirmPasswordError && (
+                <p className=" text-accent font-bold text-[14px] pt-1.5">
+                  {confirmPasswordError}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-3 lg:pt-4.5">
               <button
