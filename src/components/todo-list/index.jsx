@@ -126,9 +126,9 @@ const TodoList = () => {
   }
 
   return (
-    <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full h-full flex lg:items-center ">
-      <div className="w-full h-full flex flex-col gap-4 px-3 mx-auto lg:gap-[40.55px] lg:px-0 lg:items-center ">
-        <div className="w-full max-w-96.5 mx-auto flex justify-between items-center pt-4 lg:pt-4 lg:max-w-241">
+    <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full min-h-dvh flex lg:items-center ">
+      <div className="w-full h-full flex flex-col gap-4 px-3 mx-auto lg:gap-[40.55px] lg:px-0 lg:items-center py-4 ">
+        <div className="w-full max-w-96.5 mx-auto flex justify-between items-center lg:max-w-241">
           <div className="flex justify-center items-center">
             <img
               className="h-10 aspect-square"

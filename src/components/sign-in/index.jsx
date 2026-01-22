@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -10,23 +11,31 @@ const SignIn = () => {
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const handleCheckOut = async () => {
       const token = Cookies.get("todoUserToken");
       if (!token) {
-        console.log("目前 cookie 沒紀錄，請重新登入");
         return;
       }
       try {
-        const res = await apiRequest.get("/users/checkout");
-        if (res.data.status) {
-          console.log("驗證成功，歡迎回來！");
-          navigate("/todos");
-        } else {
-          console.log("驗證失敗Ｑ＿Ｑ");
-        }
+        await apiRequest.get("/users/checkout");
+        await Swal.fire({
+          icon: "success",
+          title: "歡迎回來",
+          text: "即將前往您的待辦清單",
+          timer: 1500,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
+        navigate("/todos");
       } catch (error) {
+        Swal.fire({
+          icon: "warning",
+          title: "連線逾時",
+          text: "請重新登入",
+          timer: 1500,
+          showConfirmButton: false,
+        });
         console.log(error);
       }
     };
@@ -66,14 +75,21 @@ const SignIn = () => {
     try {
       const res = await apiRequest.post("/users/sign_in", dataForSignIn);
       const { token, exp, nickname } = res.data;
-      const expDate = new Date(exp * 1000).toUTCString();
-      Cookies.set(`todoUserToken=${token}; expires=${expDate}; path=/`);
+      const expDate = new Date(exp * 1000);
+      Cookies.set("todoUserToken", token, {
+        expires: expDate,
+        path: "/",
+      });
       localStorage.setItem("todoUserNickname", nickname);
       setEmail("");
       setPassword("");
-      console.log("登入成功了！");
       navigate("/todos");
     } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "登入失敗",
+        text: "帳號或密碼錯誤，請再試一次",
+      });
       console.log("登入失敗了ＱＱ，請檢查錯誤訊息：", error);
     }
   }

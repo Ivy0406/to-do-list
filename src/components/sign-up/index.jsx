@@ -74,7 +74,7 @@ const SignUp = () => {
   }
 
   return (
-    <main className="bg-primary w-full h-full flex lg:items-center ">
+    <main className="bg-primary w-full min-h-dvh flex lg:items-center ">
       <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:items-center ">
         <div className="w-full max-w-96.5 mx-auto pt-12 lg:pt-0">
           <div className="flex justify-center items-center">
