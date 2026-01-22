@@ -14,12 +14,38 @@ const TodoList = () => {
   const [editingId, setEditingId] = useState(null);
   const [tempContent, setTempContent] = useState("");
   const [currentTab, setCurrentTab] = useState("all");
-  const selectedTodos = todos.filter(todo=>{
-    if(currentTab === "all") return true;
-    if(currentTab === "pending") return !todo.status;
-    if(currentTab === "done") return todo.status;
+  const selectedTodos = todos.filter((todo) => {
+    if (currentTab === "all") return true;
+    if (currentTab === "pending") return !todo.status;
+    if (currentTab === "done") return todo.status;
   });
-  const pendingCounts = todos.filter(todo=>!todo.status).length;
+  const pendingCounts = todos.filter((todo) => !todo.status).length;
+
+  async function handleGetTodos() {
+    try {
+      const res = await apiRequest.get("/todos/");
+      setTodos(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const res = await apiRequest.get("/users/checkout");
+        setNickname(res.data.nickname);
+        localStorage.setItem("todoUserNickname", res.data.nickname);
+        handleGetTodos();
+      } catch (error) {
+        console.log("驗證失敗ＱＱ，請重新登入", error);
+        Cookies.remove("todoUserToken");
+        localStorage.removeItem("todoUserNickname");
+        navigate("/");
+      }
+    };
+    checkToken();
+  }, []);
 
   async function handleSignOut() {
     try {
@@ -36,20 +62,6 @@ const TodoList = () => {
       localStorage.removeItem("todoUserNickname");
     }
   }
-
-  async function handleGetTodos() {
-    try {
-      const res = await apiRequest.get("/todos/");
-      setTodos(res.data.data);
-      console.log("資料取得成功！", res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    handleGetTodos();
-  }, []);
 
   async function handleAddTodos() {
     const itemToAdd = {
@@ -142,6 +154,7 @@ const TodoList = () => {
         <div className="w-full max-w-125 mx-auto flex flex-col items-center gap-6.5 px-8 lg:gap-4">
           <form className="relative w-full ">
             <input
+              id="newTodo"
               type="text"
               placeholder="新增待辦事項"
               value={newContent}
@@ -166,22 +179,22 @@ const TodoList = () => {
               <div className="flex h-12.75">
                 <button
                   value="all"
-                  onClick = {e=>setCurrentTab(e.target.value)}
-                  className={ `flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "all" ? ("text-text-main border-b-2 border-text-main") : (" font-bold text-text-sub border-b-2 border-[#EFEFEF]")}`}
+                  onClick={(e) => setCurrentTab(e.target.value)}
+                  className={`flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "all" ? "text-text-main border-b-2 border-text-main" : " font-bold text-text-sub border-b-2 border-[#EFEFEF]"}`}
                 >
                   全部
                 </button>
                 <button
                   value="pending"
-                  onClick = {e=>setCurrentTab(e.target.value)}
-                  className={ `flex-1 font-bold cursor-pointer text-[14px] ${currentTab === "pending" ? (" text-text-main border-b-2 border-text-main") : ("font-bold text-text-sub border-b-2 border-[#EFEFEF]")}`}
+                  onClick={(e) => setCurrentTab(e.target.value)}
+                  className={`flex-1 font-bold cursor-pointer text-[14px] ${currentTab === "pending" ? " text-text-main border-b-2 border-text-main" : "font-bold text-text-sub border-b-2 border-[#EFEFEF]"}`}
                 >
                   待完成
                 </button>
                 <button
                   value="done"
-                  onClick = {e=>setCurrentTab(e.target.value)}
-                  className={ `flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "done" ? ("text-text-main border-b-2 border-text-main") : (" text-text-sub border-b-2 border-[#EFEFEF]")}`}
+                  onClick={(e) => setCurrentTab(e.target.value)}
+                  className={`flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "done" ? "text-text-main border-b-2 border-text-main" : " text-text-sub border-b-2 border-[#EFEFEF]"}`}
                 >
                   已完成
                 </button>
@@ -218,7 +231,7 @@ const TodoList = () => {
                               if (e.key === "Escape") handleCancelEditing();
                             }}
                             autoFocus
-                            onBlur = {handleCancelEditing}
+                            onBlur={handleCancelEditing}
                             className="w-full bg-input-default outline-none focus:border-2 focus:border-primary focus:rounded-[5px]"
                           ></input>
                         ) : (
