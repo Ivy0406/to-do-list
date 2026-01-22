@@ -26,7 +26,7 @@ const SignIn = () => {
     if (!password.trim()) {
       setPasswordError("此欄位不可為空");
       isValid = false;
-    } else if (!password.trim().length < 6) {
+    } else if (password.trim().length < 6) {
       setPasswordError("密碼至少 6 碼");
       isValid = false;
     } else {
