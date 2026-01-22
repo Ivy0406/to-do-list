@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -65,10 +66,21 @@ const SignUp = () => {
     };
 
     try {
-      const res = await apiRequest.post("/users/sign_up", dataForSignUp);
-      console.log("註冊成功！請重新登入", res.data);
+      await apiRequest.post("/users/sign_up", dataForSignUp);
+      await Swal.fire({
+        icon: "success",
+        title: "註冊成功",
+        text: "請重新登入",
+        timer: 1500,
+        showConfirmButton: false,
+      });
       navigate("/");
     } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "註冊失敗",
+        text: "請再試一次",
+      });
       console.log("註冊失敗ＱＱ，錯誤訊息：", error);
     }
   }
