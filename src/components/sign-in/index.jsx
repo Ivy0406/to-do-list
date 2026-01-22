@@ -12,7 +12,7 @@ const SignIn = () => {
   async function handleSignIn(e) {
     e.preventDefault();
     let isValid = "true";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email.trim()) {
       setEmailError("此欄位不可為空");
       isValid = false;
