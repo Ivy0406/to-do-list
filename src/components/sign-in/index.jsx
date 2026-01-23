@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Swal from "sweetalert2";
-import AuthVisual from "../key-visual/AuthVisual";
+import AuthVisual from "../ui/AuthVisual";
+import FormInput from "../ui/FormInput";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -61,56 +62,33 @@ const SignIn = () => {
             最實用的線上待辦事項服務
           </h2>
           <form className="w-full max-w-76 mx-auto flex flex-col items-center gap-4">
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="Email"
-                className="text-text-main text-[14px] font-bold"
-              >
-                Email
-              </label>
-              <input
-                id="Email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError("");
-                }}
-                type="email"
-                placeholder="請輸入Email"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {emailError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {emailError}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="password"
-                className="text-text-main text-[14px] font-bold"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError("");
-                }}
-                type="password"
-                placeholder="請輸入密碼"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {passwordError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {passwordError}
-                </p>
-              )}
-            </div>
+            <FormInput
+              id="email"
+              label="Email"
+              type="email"
+              value={email}
+              autoComplete="email"
+              placeholder="請輸入Email"
+              error={emailError}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) setEmailError("");
+              }}
+            />
+            <FormInput
+              id="password"
+              label="密碼"
+              type="password"
+              value={password}
+              autoComplete=""
+              placeholder="請輸入密碼"
+              error={passwordError}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (passwordError) setPasswordError("");
+              }}
+            />
+            
             <div className="flex flex-col gap-3">
               <button
                 onClick={(e) => handleSignIn(e)}

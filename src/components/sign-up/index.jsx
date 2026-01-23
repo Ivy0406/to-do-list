@@ -16,7 +16,6 @@ const SignUp = () => {
   const [nicknameError, setNicknameError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
-
   async function handleSignUp(e) {
     e.preventDefault();
 
@@ -98,7 +97,7 @@ const SignUp = () => {
           </h2>
           <form className="w-full  flex flex-col items-center gap-4">
             <FormInput
-              id="Email"
+              id="email"
               label="Email"
               type="email"
               value={email}
@@ -110,79 +109,48 @@ const SignUp = () => {
                 if (emailError) setEmailError("");
               }}
             />
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="nickname"
-                className="text-text-main text-[14px] font-bold"
-              >
-                您的暱稱
-              </label>
-              <input
-                id="nickname"
-                autoComplete="username"
-                value={nickname}
-                onChange={(e) => {
-                  setNickname(e.target.value);
-                  if (nicknameError) setNicknameError("");
-                }}
-                type="text"
-                placeholder="請輸入暱稱"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {nicknameError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {nicknameError}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="password"
-                className="text-text-main text-[14px] font-bold"
-              >
-                密碼
-              </label>
-              <input
-                id="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError("");
-                }}
-                type="password"
-                placeholder="請輸入密碼"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {passwordError && (
-                <p className=" text-accent font-bold text-[14px] pt-1.5">
-                  {passwordError}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="confirmPassword"
-                className="text-text-main text-[14px] font-bold"
-              >
-                再次輸入密碼
-              </label>
-              <input
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  if (confirmPasswordError) setConfirmPasswordError("");
-                }}
-                type="password"
-                placeholder="請再次輸入密碼"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {confirmPasswordError && (
-                <p className=" text-accent font-bold text-[14px] pt-1.5">
-                  {confirmPasswordError}
-                </p>
-              )}
-            </div>
+            <FormInput
+              id="nickname"
+              label="您的暱稱"
+              type="text"
+              value={nickname}
+              autoComplete="username"
+              placeholder="請輸入暱稱"
+              error={nicknameError}
+              onChange={(e) => {
+                setNickname(e.target.value);
+                if (nicknameError) setNicknameError("");
+              }}
+            />
+
+            <FormInput
+              id="password"
+              label="密碼"
+              type="password"
+              value={password}
+              autoComplete=""
+              placeholder="請輸入密碼"
+              error={passwordError}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (passwordError) setPasswordError("");
+              }}
+            />
+            
+            <FormInput
+              id="confirmPassword"
+              label="再次輸入密碼"
+              type="password"
+              value={confirmPassword}
+              autoComplete=""
+              placeholder="請再次輸入密碼"
+              error={confirmPasswordError}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (confirmPasswordError) setConfirmPasswordError("");
+              }}
+            />
+  
             <div className="flex flex-col gap-3 lg:pt-4.5">
               <button
                 onClick={(e) => handleSignUp(e)}
