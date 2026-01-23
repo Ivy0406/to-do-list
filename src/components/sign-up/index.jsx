@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
 import Swal from "sweetalert2";
-import AuthVisual from "../key-visual/AuthVisual";
+import AuthVisual from "../ui/AuthVisual";
+import FormInput from "../ui/FormInput";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -96,31 +97,19 @@ const SignUp = () => {
             註冊帳號
           </h2>
           <form className="w-full  flex flex-col items-center gap-4">
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="Email"
-                className="text-text-main text-[14px] font-bold"
-              >
-                Email
-              </label>
-              <input
-                id="Email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError("");
-                }}
-                type="email"
-                placeholder="請輸入Email"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {emailError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {emailError}
-                </p>
-              )}
-            </div>
+            <FormInput
+              id="Email"
+              label="Email"
+              type="email"
+              value={email}
+              autoComplete="email"
+              placeholder="請輸入Email"
+              error={emailError}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailError) setEmailError("");
+              }}
+            />
             <div className="flex flex-col gap-1 w-full">
               <label
                 htmlFor="nickname"
