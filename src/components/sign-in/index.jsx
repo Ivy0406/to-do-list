@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import AuthVisual from "../ui/AuthVisual";
-import FormInput from "../ui/FormInput";
+import AuthVisual from "../shared/AuthVisual";
+import FormInput from "../shared/FormInput";
 import {useForm} from "../../hooks/useForm";
 import {useCheckInputs} from "../../hooks/useCheckInputs";
 
