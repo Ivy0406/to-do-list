@@ -1,55 +1,43 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import Swal from "sweetalert2";
 import AuthVisual from "../ui/AuthVisual";
 import FormInput from "../ui/FormInput";
+import {useForm} from "../../hooks/useForm";
+import {useCheckInputs} from "../../hooks/useCheckInputs";
+
+const SIGN_IN_DEFAULT_VALUES = {
+  email: "",
+  password: "",
+};
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
+  const {values:signInData ,handleChange: updateField} = useForm(SIGN_IN_DEFAULT_VALUES);
+  const {errors, validate, clearErrors} = useCheckInputs();
   const {signIn,checkToken} = useAuth();
 
 
   useEffect(() => {
    checkToken();
-  }, []);
+  }, [checkToken]);
+
+  function handleInputChange (e){
+    const fieldId = e.target.id;
+    updateField(e);
+    clearErrors(fieldId);
+  }
 
   async function handleSignIn(e) {
     e.preventDefault();
-    let isValid = true;
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!email.trim()) {
-      setEmailError("此欄位不可為空");
-      isValid = false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Email 格式錯誤");
-      isValid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (!password.trim()) {
-      setPasswordError("此欄位不可為空");
-      isValid = false;
-    } else if (password.trim().length < 6) {
-      setPasswordError("密碼至少 6 碼");
-      isValid = false;
-    } else {
-      setPasswordError("");
-    }
-
+    let isValid = validate(signInData);
     if (!isValid) return;
 
     const dataForSignIn = {
-      email: email,
-      password: password,
+      email: signInData.email,
+      password: signInData.password,
     };
 
-    signIn(dataForSignIn);
+    await signIn(dataForSignIn);
   
   }
 
@@ -66,27 +54,21 @@ const SignIn = () => {
               id="email"
               label="Email"
               type="email"
-              value={email}
+              value={signInData.email}
               autoComplete="email"
               placeholder="請輸入Email"
-              error={emailError}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (emailError) setEmailError("");
-              }}
+              error={errors.email}
+              onChange={handleInputChange}
             />
             <FormInput
               id="password"
               label="密碼"
               type="password"
-              value={password}
+              value={signInData.password}
               autoComplete=""
               placeholder="請輸入密碼"
-              error={passwordError}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (passwordError) setPasswordError("");
-              }}
+              error={errors.password}
+              onChange={handleInputChange}
             />
             
             <div className="flex flex-col gap-3">
