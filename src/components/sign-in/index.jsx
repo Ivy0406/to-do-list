@@ -1,176 +1,76 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import apiRequest from "../../api/apiRequest";
-import Cookies from "js-cookie";
-import Swal from "sweetalert2";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import AuthVisual from "../ui/AuthVisual";
+import FormInput from "../ui/FormInput";
+import {useForm} from "../../hooks/useForm";
+import {useCheckInputs} from "../../hooks/useCheckInputs";
+
+const SIGN_IN_DEFAULT_VALUES = {
+  email: "",
+  password: "",
+};
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const navigate = useNavigate();
+  const {values:signInData ,handleChange: updateField} = useForm(SIGN_IN_DEFAULT_VALUES);
+  const {errors, validate, clearErrors} = useCheckInputs();
+  const {signIn,checkToken} = useAuth();
+
 
   useEffect(() => {
-    const handleCheckOut = async () => {
-      const token = Cookies.get("todoUserToken");
-      if (!token) {
-        return;
-      }
-      try {
-        await apiRequest.get("/users/checkout");
-        await Swal.fire({
-          icon: "success",
-          title: "歡迎回來",
-          text: "即將前往您的待辦清單",
-          timer: 1500,
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
-        navigate("/todos");
-      } catch (error) {
-        Swal.fire({
-          icon: "warning",
-          title: "連線逾時",
-          text: "請重新登入",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        console.log(error);
-      }
-    };
-    handleCheckOut();
-  }, []);
+   checkToken();
+  }, [checkToken]);
+
+  function handleInputChange (e){
+    const fieldId = e.target.id;
+    updateField(e);
+    clearErrors(fieldId);
+  }
 
   async function handleSignIn(e) {
     e.preventDefault();
-    let isValid = true;
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!email.trim()) {
-      setEmailError("此欄位不可為空");
-      isValid = false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Email 格式錯誤");
-      isValid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (!password.trim()) {
-      setPasswordError("此欄位不可為空");
-      isValid = false;
-    } else if (password.trim().length < 6) {
-      setPasswordError("密碼至少 6 碼");
-      isValid = false;
-    } else {
-      setPasswordError("");
-    }
-
+    let isValid = validate(signInData);
     if (!isValid) return;
 
     const dataForSignIn = {
-      email: email,
-      password: password,
+      email: signInData.email,
+      password: signInData.password,
     };
-    try {
-      const res = await apiRequest.post("/users/sign_in", dataForSignIn);
-      const { token, exp, nickname } = res.data;
-      const expDate = new Date(exp * 1000);
-      Cookies.set("todoUserToken", token, {
-        expires: expDate,
-        path: "/",
-      });
-      localStorage.setItem("todoUserNickname", nickname);
-      setEmail("");
-      setPassword("");
-      navigate("/todos");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "登入失敗",
-        text: "帳號或密碼錯誤，請再試一次",
-      });
-      console.log("登入失敗了ＱＱ，請檢查錯誤訊息：", error);
-    }
+
+    await signIn(dataForSignIn);
+  
   }
 
   return (
     <main className="bg-primary w-full h-full flex lg:items-center ">
       <div className="w-full h-full max-w-199 flex flex-col gap-4 px-3 mx-auto lg:flex lg:flex-row lg:justify-between lg:px-0 lg:max-h-112 ">
-        <div className="pt-12 lg:pt-0">
-          <div className="flex justify-center items-center">
-            <img
-              className="h-10 aspect-square"
-              src="/src/images/logo_lg.svg"
-              alt="logo"
-            />
-            <h1 className="font-sub font-bold text-text-main text-[32px]">
-              ONLINE TODO LIST
-            </h1>
-          </div>
-          <div className="hidden w-full max-w-96.5 aspect-square lg:block lg:pt-3.75">
-            <img
-              src="/src/images/key-visual.svg"
-              alt="主視覺"
-              className="w-full aspect-square object-contain"
-            />
-          </div>
-        </div>
+        <AuthVisual />
         <div className="flex flex-col gap-8 lg:gap-6 lg:pt-15.5">
           <h2 className="text-[20px] font-bold text-text-main text-center lg:text-2xl">
             最實用的線上待辦事項服務
           </h2>
           <form className="w-full max-w-76 mx-auto flex flex-col items-center gap-4">
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="Email"
-                className="text-text-main text-[14px] font-bold"
-              >
-                Email
-              </label>
-              <input
-                id="Email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError("");
-                }}
-                type="email"
-                placeholder="請輸入Email"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {emailError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {emailError}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1 w-full">
-              <label
-                htmlFor="password"
-                className="text-text-main text-[14px] font-bold"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError("");
-                }}
-                type="password"
-                placeholder="請輸入密碼"
-                className="bg-input-default rounded-[10px] px-4 py-3"
-              ></input>
-              {passwordError && (
-                <p className="text-accent font-bold text-[14px] pt-1.5">
-                  {passwordError}
-                </p>
-              )}
-            </div>
+            <FormInput
+              id="email"
+              label="Email"
+              type="email"
+              value={signInData.email}
+              autoComplete="email"
+              placeholder="請輸入Email"
+              error={errors.email}
+              onChange={handleInputChange}
+            />
+            <FormInput
+              id="password"
+              label="密碼"
+              type="password"
+              value={signInData.password}
+              autoComplete=""
+              placeholder="請輸入密碼"
+              error={errors.password}
+              onChange={handleInputChange}
+            />
+            
             <div className="flex flex-col gap-3">
               <button
                 onClick={(e) => handleSignIn(e)}
