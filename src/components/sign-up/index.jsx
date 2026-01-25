@@ -1,90 +1,43 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import apiRequest from "../../api/apiRequest";
-import Swal from "sweetalert2";
+
+import { Link } from "react-router-dom";
 import AuthVisual from "../ui/AuthVisual";
 import FormInput from "../ui/FormInput";
+import { useAuth } from "../../hooks/useAuth";
+import { useForm } from "../../hooks/useForm";
+import { useCheckInputs } from "../../hooks/useCheckInputs";
+
+const SIGN_UP_DEFAULT_VALUES = {
+  email: "",
+  nickname: "",
+  password: "",
+  confirmPassword: "", 
+};
+
 
 const SignUp = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [nicknameError, setNicknameError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const {signUp} = useAuth();
+  const {values:signUpData ,handleChange: updateField} = useForm(SIGN_UP_DEFAULT_VALUES);
+  const {errors, validate, clearErrors} = useCheckInputs();
+
+  function handleInputChange (e){
+    const fieldId = e.target.id;
+    updateField(e);
+    clearErrors(fieldId);
+  }
 
   async function handleSignUp(e) {
     e.preventDefault();
 
-    let isValid = true;
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-    if (!email.trim()) {
-      setEmailError("此欄位不可為空");
-      isValid = false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError("Email 格式錯誤");
-      isValid = false;
-    } else {
-      setEmailError("");
-    }
-
-    if (!nickname.trim()) {
-      setNicknameError("此欄位不可為空");
-      isValid = false;
-    } else {
-      setNicknameError("");
-    }
-
-    if (!password.trim()) {
-      setPasswordError("此欄位不可為空");
-      isValid = false;
-    } else if (password.trim().length < 6) {
-      setPasswordError("密碼至少 6 碼");
-      isValid = false;
-    } else {
-      setPasswordError("");
-    }
-
-    if (!confirmPassword.trim()) {
-      setConfirmPasswordError("此欄位不可為空");
-      isValid = false;
-    } else if (confirmPassword !== password) {
-      setConfirmPasswordError("兩次密碼輸入不一致");
-      isValid = false;
-    } else {
-      setConfirmPasswordError("");
-    }
-
+    let isValid = validate(signUpData);
     if (!isValid) return;
 
     const dataForSignUp = {
-      email: email,
-      password: password,
-      nickname: nickname,
+      email: signUpData.email,
+      password: signUpData.password,
+      nickname: signUpData.nickname,
     };
 
-    try {
-      await apiRequest.post("/users/sign_up", dataForSignUp);
-      await Swal.fire({
-        icon: "success",
-        title: "註冊成功",
-        text: "請重新登入",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-      navigate("/");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "註冊失敗",
-        text: "請再試一次",
-      });
-      console.log("註冊失敗ＱＱ，錯誤訊息：", error);
-    }
+    await signUp(dataForSignUp);
   }
 
   return (
@@ -100,57 +53,45 @@ const SignUp = () => {
               id="email"
               label="Email"
               type="email"
-              value={email}
+              value={signUpData.email}
               autoComplete="email"
               placeholder="請輸入Email"
-              error={emailError}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (emailError) setEmailError("");
-              }}
+              error={errors.email}
+              onChange={handleInputChange}
             />
             <FormInput
               id="nickname"
               label="您的暱稱"
               type="text"
-              value={nickname}
+              value={signUpData.nickname}
               autoComplete="username"
               placeholder="請輸入暱稱"
-              error={nicknameError}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                if (nicknameError) setNicknameError("");
-              }}
+              error={errors.nickname}
+              onChange={handleInputChange}
             />
 
             <FormInput
               id="password"
               label="密碼"
               type="password"
-              value={password}
+              value={signUpData.password}
               autoComplete=""
               placeholder="請輸入密碼"
-              error={passwordError}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (passwordError) setPasswordError("");
-              }}
+              error={errors.password}
+              onChange={handleInputChange}
             />
-            
+
             <FormInput
               id="confirmPassword"
               label="再次輸入密碼"
               type="password"
-              value={confirmPassword}
+              value={signUpData.confirmPassword}
               autoComplete=""
               placeholder="請再次輸入密碼"
-              error={confirmPasswordError}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                if (confirmPasswordError) setConfirmPasswordError("");
-              }}
+              error={errors.confirmPassword}
+              onChange={handleInputChange}
             />
-  
+
             <div className="flex flex-col gap-3 lg:pt-4.5">
               <button
                 onClick={(e) => handleSignUp(e)}

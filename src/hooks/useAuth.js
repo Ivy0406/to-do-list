@@ -50,7 +50,7 @@ export const useAuth = () => {
       Swal.fire({
         icon: "error",
         title: "註冊失敗",
-        text: "請再試一次",
+        text: error.response?.data?.message || "請再試一次",
       });
       console.log("註冊失敗ＱＱ，錯誤訊息：", error);
     }
