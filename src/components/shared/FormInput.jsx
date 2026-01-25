@@ -1,4 +1,4 @@
-import ErrorMessage from "../ui/ErrorMessage";
+import ErrorMessage from "../shared/ErrorMessage";
 
 const FormInput = ({ label, id, type, value, placeholder, onChange, error, autoComplete }) => {
   return (
