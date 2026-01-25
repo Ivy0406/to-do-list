@@ -2,7 +2,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import SignIn from "./components/sign-in";
 import SignUp from "./components/sign-up";
-import TodoList from "./components/todo-list";
+import TodoListPage from "./components/todo-list";
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/todos" element={<TodoList />} />
+        <Route path="/todos" element={<TodoListPage />} />
       </Routes>
     </>
   );
