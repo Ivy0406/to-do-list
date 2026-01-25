@@ -6,14 +6,19 @@ export const useTodos = () => {
   const [newContent, setNewContent] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [tempContent, setTempContent] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isTodosEmpty = todos.length === 0;
 
   async function getTodos() {
+    setIsLoading(true);
     try {
       const res = await apiRequest.get("/todos/");
       setTodos(res.data.data);
     } catch (error) {
       console.log("列表讀取失敗Ｑ＿Ｑ", error);
     }
+    setIsLoading(false);
   }
 
   async function addTodos() {
@@ -83,6 +88,8 @@ export const useTodos = () => {
 
   return {
     todos,
+    isLoading,
+    isTodosEmpty,
     newContent,
     editingId,
     tempContent,

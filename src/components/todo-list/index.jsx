@@ -7,10 +7,13 @@ import TodoTabs from "./TodoTabs";
 import { useTodos } from "../../hooks/useTodos";
 import { useAuth } from "../../hooks/useAuth";
 import TodoList from "./TodoList";
+import Loading from "../shared/Loading";
 
 const TodoListPage = () => {
   const {
     todos,
+    isLoading,
+    isTodosEmpty,
     newContent,
     editingId,
     tempContent,
@@ -102,7 +105,7 @@ const TodoListPage = () => {
               />
             </button>
           </form>
-          {todos.length === 0 ? (
+          {isLoading ? <Loading/> : isTodosEmpty ? (
             <Empty />
           ) : (
             <div className="w-full bg-input-default rounded-[10px] shadow-[0_0_15px_rgba(0,0,0,0.15)] ">
@@ -118,70 +121,6 @@ const TodoListPage = () => {
                 cancelEditing={cancelEditing}
                 saveEditing={saveEditing}
               />
-              {/* <ul className="pt-5.75 px-4 flex flex-col gap-4 text-text-main">
-                {[...selectedTodos].reverse().map((item) => (
-                  <li
-                    key={item.id}
-                    className="group pb-3.75 border-b border-[#E5E5E5] lg:border-0 lg:pb-0"
-                  >
-                    <div className="flex justify-between">
-                      <div className="w-full flex gap-4 lg:border-b lg:border-[#E5E5E5] lg:pb-3.75 lg:mr-4">
-                        <button
-                          className="cursor-pointer"
-                          onClick={() => handleTodoStatus(item.id)}
-                        >
-                          <img
-                            src={
-                              item.status
-                                ? "/src/images/icon-check.svg"
-                                : "/src/images/icon-checkbox.svg"
-                            }
-                            alt="勾選框"
-                          />
-                        </button>
-
-                        {editingId === item.id ? (
-                          <input
-                            type="text"
-                            value={tempContent}
-                            onChange={(e) => setTempContent(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") handleSaveEditing(item.id);
-                              if (e.key === "Escape") handleCancelEditing();
-                            }}
-                            autoFocus
-                            onBlur={handleCancelEditing}
-                            className="w-full bg-input-default outline-none focus:border-2 focus:border-primary focus:rounded-[5px]"
-                          ></input>
-                        ) : (
-                          <p
-                            className={
-                              item.status
-                                ? "text-text-sub line-through"
-                                : "text-text-main"
-                            }
-                            onClick={() =>
-                              handleStartEditing(item.id, item.content)
-                            }
-                          >
-                            {item.content}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        className="cursor-pointer w-4 h-fit lg:hidden lg:group-hover:block "
-                        onClick={() => handleDeleteTodo(item.id)}
-                      >
-                        <img
-                          src="/src/images/icon-delete.svg"
-                          alt="刪除按鈕"
-                          className="w-full h-full object-contain "
-                        />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul> */}
               <div className="p-4">
                 <p className="text-text-main">{pendingCounts} 個待完成項目</p>
               </div>
