@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../api/apiRequest";
 import Cookies from "js-cookie";
 import Empty from "./Empty";
+import TodoTabs from "./TodoTabs";
 
 const TodoList = () => {
   const navigate = useNavigate();
@@ -126,7 +127,7 @@ const TodoList = () => {
   }
 
   return (
-    <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full min-h-dvh flex lg:items-center ">
+    <main className="bg-primary lg:bg-[linear-gradient(172.7deg,#FFD370_5.12%,#FFD370_53.33%,#FFD370_53.44%,#FFFFFF_53.45%,#FFFFFF_94.32%)] w-full min-h-dvh flex ">
       <div className="w-full h-full flex flex-col gap-4 px-3 mx-auto lg:gap-[40.55px] lg:px-0 lg:items-center py-4 ">
         <div className="w-full max-w-96.5 mx-auto flex justify-between items-center lg:max-w-241">
           <div className="flex justify-center items-center">
@@ -176,29 +177,10 @@ const TodoList = () => {
             <Empty />
           ) : (
             <div className="w-full bg-input-default rounded-[10px] shadow-[0_0_15px_rgba(0,0,0,0.15)] ">
-              <div className="flex h-12.75">
-                <button
-                  value="all"
-                  onClick={(e) => setCurrentTab(e.target.value)}
-                  className={`flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "all" ? "text-text-main border-b-2 border-text-main" : " font-bold text-text-sub border-b-2 border-[#EFEFEF]"}`}
-                >
-                  全部
-                </button>
-                <button
-                  value="pending"
-                  onClick={(e) => setCurrentTab(e.target.value)}
-                  className={`flex-1 font-bold cursor-pointer text-[14px] ${currentTab === "pending" ? " text-text-main border-b-2 border-text-main" : "font-bold text-text-sub border-b-2 border-[#EFEFEF]"}`}
-                >
-                  待完成
-                </button>
-                <button
-                  value="done"
-                  onClick={(e) => setCurrentTab(e.target.value)}
-                  className={`flex-1 font-bold  cursor-pointer text-[14px] ${currentTab === "done" ? "text-text-main border-b-2 border-text-main" : " text-text-sub border-b-2 border-[#EFEFEF]"}`}
-                >
-                  已完成
-                </button>
-              </div>
+              <TodoTabs 
+                currentTab={currentTab} 
+                onTabChange={setCurrentTab} 
+              />
               <ul className="pt-5.75 px-4 flex flex-col gap-4 text-text-main">
                 {[...selectedTodos].reverse().map((item) => (
                   <li
