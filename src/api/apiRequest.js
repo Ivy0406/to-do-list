@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const apiRequest = axios.create({
-    baseURL: "https://todolist-api.hexschool.io"
+    baseURL: import.meta.env.VITE_API_BASE
 })
 
 apiRequest.interceptors.request.use((config)=>{
