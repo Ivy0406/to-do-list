@@ -8,6 +8,8 @@ import { useTodos } from "../../hooks/useTodos";
 import { useAuth } from "../../hooks/useAuth";
 import TodoList from "./TodoList";
 import Loading from "../shared/Loading";
+import LOGO_IMG from "../../images/logo_lg.svg";
+import ICON_PLUS from "../../images/icon-plus.svg";
 
 const TodoListPage = () => {
   const {
@@ -65,7 +67,7 @@ const TodoListPage = () => {
           <div className="flex justify-center items-center">
             <img
               className="h-10 aspect-square"
-              src="/src/images/logo_lg.svg"
+              src={LOGO_IMG}
               alt="logo"
             />
             <h1 className="font-sub font-bold text-text-main text-[24px]">
@@ -99,13 +101,15 @@ const TodoListPage = () => {
               className="absolute right-1 top-1 bg-text-main rounded-[10px] w-10 h-9.75 flex items-center justify-center cursor-pointer"
             >
               <img
-                src="/src/images/icon-plus.svg"
+                src={ICON_PLUS}
                 alt="新增按鈕"
                 className="w-5 aspect-square object-center"
               />
             </button>
           </form>
-          {isLoading ? <Loading/> : isTodosEmpty ? (
+          {isLoading ? (
+            <Loading />
+          ) : isTodosEmpty ? (
             <Empty />
           ) : (
             <div className="w-full bg-input-default rounded-[10px] shadow-[0_0_15px_rgba(0,0,0,0.15)] ">
