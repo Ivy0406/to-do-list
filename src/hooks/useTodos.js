@@ -7,7 +7,7 @@ export const useTodos = () => {
   const [editingId, setEditingId] = useState(null);
   const [tempContent, setTempContent] = useState("");
 
-  async function handleGetTodos() {
+  async function getTodos() {
     try {
       const res = await apiRequest.get("/todos/");
       setTodos(res.data.data);
@@ -16,7 +16,7 @@ export const useTodos = () => {
     }
   }
 
-  async function handleAddTodos() {
+  async function addTodos() {
     const isNewContentEmpty = !newContent.trim();
     if (isNewContentEmpty) return;
 
@@ -26,45 +26,45 @@ export const useTodos = () => {
     try {
       await apiRequest.post("/todos/", itemToAdd);
       setNewContent("");
-      handleGetTodos();
+      getTodos();
     } catch (error) {
       console.log("新增失敗ＱＱ", error);
     }
   }
 
-  async function handleTodoStatus(id) {
+  async function toggleTodoStatus(id) {
     try {
       await apiRequest.patch(`/todos/${id}/toggle`);
-      handleGetTodos();
+      getTodos();
     } catch (error) {
-      console.log("更新狀態失敗Q_Q",error);
+      console.log("更新狀態失敗Q_Q", error);
     }
   }
 
-  async function handleDeleteTodo(id) {
+  async function deleteTodo(id) {
     try {
       const res = await apiRequest.delete(`/todos/${id}`);
       if (res.data.status) {
-        handleGetTodos();
+        getTodos();
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleStartEditing(id, currentContent) {
+  function startEditing(id, currentContent) {
     setEditingId(id);
     setTempContent(currentContent);
   }
 
-  function handleCancelEditing() {
+  function cancelEditing() {
     setEditingId(null);
     setTempContent("");
   }
 
-  async function handleSaveEditing(id) {
+  async function saveEditing(id) {
     if (!tempContent.trim()) {
-      handleCancelEditing();
+      cancelEditing();
       return;
     }
 
@@ -75,7 +75,7 @@ export const useTodos = () => {
       const res = await apiRequest.put(`/todos/${id}`, dataForUpdate);
       console.log(res.data.message);
       setEditingId(null);
-      handleGetTodos();
+      getTodos();
     } catch (error) {
       console.log("編輯失敗ＱＱ", error);
     }
@@ -88,12 +88,12 @@ export const useTodos = () => {
     tempContent,
     setNewContent,
     setTempContent,
-    handleGetTodos,
-    handleAddTodos,
-    handleTodoStatus,
-    handleDeleteTodo,
-    handleStartEditing,
-    handleCancelEditing,
-    handleSaveEditing,
-  }
+    getTodos,
+    addTodos,
+    toggleTodoStatus,
+    deleteTodo,
+    startEditing,
+    cancelEditing,
+    saveEditing,
+  };
 };
