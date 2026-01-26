@@ -1,4 +1,7 @@
-  # <center><img src="/public/favicon.png" width="32"> 黃黃的 To-Do List</center>
+  <h1 align="center">
+  <img src="public/favicon.png" width="32" /> 
+  黃黃的 To-Do List
+</h1>
 
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite)](https://vitejs.dev/)
