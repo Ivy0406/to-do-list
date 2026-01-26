@@ -58,6 +58,7 @@ const SignUp = () => {
               placeholder="請輸入Email"
               error={errors.email}
               onChange={handleInputChange}
+              isSignInPage = {false}
             />
             <FormInput
               id="nickname"
@@ -68,6 +69,7 @@ const SignUp = () => {
               placeholder="請輸入暱稱"
               error={errors.nickname}
               onChange={handleInputChange}
+              isSignInPage = {false}
             />
 
             <FormInput
@@ -79,6 +81,7 @@ const SignUp = () => {
               placeholder="請輸入密碼"
               error={errors.password}
               onChange={handleInputChange}
+              isSignInPage = {false}
             />
 
             <FormInput
@@ -90,6 +93,7 @@ const SignUp = () => {
               placeholder="請再次輸入密碼"
               error={errors.confirmPassword}
               onChange={handleInputChange}
+              isSignInPage = {false}
             />
 
             <div className="flex flex-col gap-3 lg:pt-4.5">
