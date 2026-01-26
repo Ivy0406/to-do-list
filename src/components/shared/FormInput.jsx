@@ -1,10 +1,17 @@
 import ErrorMessage from "../shared/ErrorMessage";
 
-const FormInput = ({ label, id, type, value, placeholder, onChange, error, autoComplete }) => {
+const FormInput = ({ label, id, type, value, placeholder, onChange, error, autoComplete, isSignInPage = false }) => {
   return (
     <div className="flex flex-col gap-1 w-full">
       <label htmlFor={id} className="text-text-main text-[14px] font-bold">
-        {label}
+        {isSignInPage ? (
+          <>
+            <span className="lg:hidden">{id}</span>
+            <span className="hidden lg:inline">{label}</span>
+          </>
+        ) : (
+          {label}
+        )}
       </label>
       <input
         id={id}

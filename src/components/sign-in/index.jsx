@@ -59,6 +59,7 @@ const SignIn = () => {
               placeholder="請輸入Email"
               error={errors.email}
               onChange={handleInputChange}
+              isSignInPage = {true}
             />
             <FormInput
               id="password"
@@ -69,6 +70,7 @@ const SignIn = () => {
               placeholder="請輸入密碼"
               error={errors.password}
               onChange={handleInputChange}
+              isSignInPage = {true}
             />
             
             <div className="flex flex-col gap-3">
